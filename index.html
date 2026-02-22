@@ -72,13 +72,14 @@
             overflow: hidden;
         }
 
-        .video-container iframe, .video-container video {
+        /* Video element styling */
+        #video-element {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: cover;
         }
 
         .overlay-text {
@@ -117,49 +118,60 @@
                 <div class="time-label" id="clock">00:00:00</div>
             </div>
             
-            <div id="video-player"></div>
+            <video id="video-element" autoplay muted loop playsinline>
+                <source id="video-source" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
     </div>
 
     <script>
+        let currentVideoURL = "";
+
         function updateDashboard() {
             const now = new Date();
             const hours = now.getHours();
+            
             const clockElement = document.getElementById('clock');
             const modeText = document.getElementById('mode-text');
-            const player = document.getElementById('video-player');
             const timeDisplay = document.getElementById('current-time-display');
+            const videoElement = document.getElementById('video-element');
+            const videoSource = document.getElementById('video-source');
 
             // වෙලාව පෙන්වීම
             clockElement.innerText = now.toLocaleTimeString();
             timeDisplay.innerText = "Current Time: " + now.toLocaleTimeString();
 
-            let videoURL = "";
+            let newVideoURL = "";
             let mode = "";
 
             // වෙලාව අනුව වීඩියෝව තෝරාගැනීම
             if (hours >= 6 && hours < 11) {
                 mode = "Morning Mode";
-                videoURL = "මෙතැනට_උදේ_වීඩියෝ_ලින්ක්_එක_දමන්න"; 
+                newVideoURL = "https://files.catbox.moe/1ap4d7.mp4"; 
             } else if (hours >= 11 && hours < 17) {
                 mode = "Afternoon Mode";
-                videoURL = "මෙතැනට_දවල්_වීඩියෝ_ලින්ක්_එක_දමන්න";
+                newVideoURL = "https://www.w3schools.com/html/mov_bbb.mp4"; // උදාහරණයක් ලෙස
             } else if (hours >= 17 && hours < 19) {
                 mode = "Evening Mode";
-                videoURL = "මෙතැනට_හවස_වීඩියෝ_ලින්ක්_එක_දමන්න";
+                newVideoURL = "https://www.w3schools.com/html/movie.mp4"; // උදාහරණයක් ලෙස
             } else {
                 mode = "Night Mode";
-                videoURL = "මෙතැනට_රෑ_වීඩියෝ_ලින්ක්_එක_දමන්න";
+                newVideoURL = "https://files.catbox.moe/1ap4d7.mp4"; // රාත්‍රී කාලයට
             }
 
             modeText.innerText = "System: " + mode;
 
-            // වීඩියෝව Embed කිරීම (YouTube හෝ Direct Link)
-            // ඔබ සතුව ලින්ක් ඇති විට පහත පේළිය වෙනස් කරන්න
-            player.innerHTML = `<iframe src="${videoURL}?autoplay=1&mute=1&controls=0&loop=1" allow="autoplay"></iframe>`;
+            // වීඩියෝව වෙනස් වී ඇත්නම් පමණක් source එක update කරන්න
+            if (newVideoURL !== currentVideoURL) {
+                currentVideoURL = newVideoURL;
+                videoSource.src = newVideoURL;
+                videoElement.load(); // අලුත් වීඩියෝව load කිරීමට
+                videoElement.play(); // Play කිරීම
+            }
         }
 
-        // සෑම තත්පරයකම වෙලාව අලුත් කරන්න
+        // සෑම තත්පරයකම වෙලාව බලන්න
         setInterval(updateDashboard, 1000);
         updateDashboard();
     </script>
