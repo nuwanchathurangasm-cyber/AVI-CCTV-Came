@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avi CCTV Home - Live Dashboard</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #161b22;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #30363d;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #58a6ff;
+            letter-spacing: 1px;
+        }
+
+        .live-indicator {
+            background-color: #da3633;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* Main Dashboard */
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .status-bar {
+            background: #21262d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        /* Video Feed Section */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+            border: 3px solid #30363d;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-container iframe, .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        .time-label {
+            color: #f0e68c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">AVI CCTV HOME</div>
+        <div class="live-indicator">● LIVE FEED</div>
+    </div>
+
+    <div class="container">
+        <div class="status-bar">
+            <span><strong>System Status:</strong> <span style="color: #3fb950;">Active</span></span>
+            <span><strong>Camera:</strong> Front Gate 01</span>
+            <span id="current-time-display"></span>
+        </div>
+
+        <div class="video-container">
+            <div class="overlay-text">
+                <div id="mode-text">Detecting Mode...</div>
+                <div class="time-label" id="clock">00:00:00</div>
+            </div>
+            
+            <div id="video-player"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateDashboard() {
+            const now = new Date();
+            const hours = now.getHours();
+            const clockElement = document.getElementById('clock');
+            const modeText = document.getElementById('mode-text');
+            const player = document.getElementById('video-player');
+            const timeDisplay = document.getElementById('current-time-display');
+
+            // වෙලාව පෙන්වීම
+            clockElement.innerText = now.toLocaleTimeString();
+            timeDisplay.innerText = "Current Time: " + now.toLocaleTimeString();
+
+            let videoURL = "";
+            let mode = "";
+
+            // වෙලාව අනුව වීඩියෝව තෝරාගැනීම
+            if (hours >= 6 && hours < 11) {
+                mode = "Morning Mode";
+                videoURL = "මෙතැනට_උදේ_වීඩියෝ_ලින්ක්_එක_දමන්න"; 
+            } else if (hours >= 11 && hours < 17) {
+                mode = "Afternoon Mode";
+                videoURL = "මෙතැනට_දවල්_වීඩියෝ_ලින්ක්_එක_දමන්න";
+            } else if (hours >= 17 && hours < 19) {
+                mode = "Evening Mode";
+                videoURL = "මෙතැනට_හවස_වීඩියෝ_ලින්ක්_එක_දමන්න";
+            } else {
+                mode = "Night Mode";
+                videoURL = "මෙතැනට_රෑ_වීඩියෝ_ලින්ක්_එක_දමන්න";
+            }
+
+            modeText.innerText = "System: " + mode;
+
+            // වීඩියෝව Embed කිරීම (YouTube හෝ Direct Link)
+            // ඔබ සතුව ලින්ක් ඇති විට පහත පේළිය වෙනස් කරන්න
+            player.innerHTML = `<iframe src="${videoURL}?autoplay=1&mute=1&controls=0&loop=1" allow="autoplay"></iframe>`;
+        }
+
+        // සෑම තත්පරයකම වෙලාව අලුත් කරන්න
+        setInterval(updateDashboard, 1000);
+        updateDashboard();
+    </script>
+
+</body>
+</html>
